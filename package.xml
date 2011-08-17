@@ -5,14 +5,14 @@
     http://pear.php.net/dtd/package-2.0.xsd">
   <name>${project.name}</name>
   <channel>${project.channel}</channel>
-  <summary>Summary goes here</summary>
+  <summary>phix and all dependencies required for creating and maintaining PHP components</summary>
   <description>
-    Description goes here
+    phix4componentdev is a meta-package that installs phix itself, plus all of the phix extensions required for creating and maintaining PHP components, plus all of the third-party tools you'll need to use.
   </description>
   <lead>
-    <name>Your name</name>
-    <user>Anything goes here</user>
-    <email>Your email address</email>
+    <name>Stuart Herbert</name>
+    <user>stuart</user>
+    <email>stuart@stuartherbert.com</email>
     <active>yes</active>
   </lead>
   <date>${build.date}</date>
@@ -25,7 +25,7 @@
     <release>stable</release>
     <api>stable</api>
   </stability>
-  <license>All rights reserved.</license>
+  <license>New BSD license.</license>
   <notes>
     No notes.
   </notes>
@@ -40,13 +40,61 @@ ${contents}
         <min>5.3.0</min>
       </php>
       <pearinstaller>
-        <min>1.6.0</min>
+        <min>1.9.3</min>
       </pearinstaller>
       <package>
-        <name>Autoloader</name>
-        <channel>pear.gradwell.com</channel>
+        <name>ComponentManager</name>
+        <channel>pear.phix-project.org</channel>
         <min>2.0.0</min>
 	      <max>2.999.9999</max>
+      </package>
+      <package>
+        <name>PHPUnit</name>
+        <channel>pear.phpunit.de</channel>
+        <min>3.5.0</min>
+        <max>3.999.9999</max>
+      </package>
+      <package>
+        <name>phing</name>
+        <channel>pear.phing.info</channel>
+        <min>2.4.6</min>
+        <max>2.999.9999</max>
+      </package>
+      <package>
+        <name>PHP_Depend</name>
+        <channel>pear.pdepend.org</channel>
+        <min>0.10.5</min>
+        <max>1.999.9999</max>
+      </package>
+      <package>
+        <name>PHP_PMD</name>
+        <channel>pear.phpmd.org</channel>
+        <min>1.1.1</min>
+        <max>1.999.9999</max>
+      </package>
+      <package>
+        <name>PhpDocumentor</name>
+        <channel>pear.php.net</channel>
+        <min>1.4.3</min>
+        <max>1.999.9999</max>
+      </package>
+      <package>
+        <name>phpcpd</name>
+        <channel>pear.phpunit.de</channel>
+        <min>1.3.2</min>
+        <max>1.999.9999</max>
+      </package>
+      <package>
+        <name>PHP_CodeSniffer</name>
+        <channel>pear.php.net</channel>
+        <min>1.3.0</min>
+        <max>1.999.9999</max>
+      </package>
+      <package>
+        <name>PHP_CodeBrowser</name>
+        <channel>pear.phpunit.de</channel>
+        <min>1.0.0</min>
+        <max>1.999.9999</max>
       </package>
     </required>
   </dependencies>
@@ -54,15 +102,15 @@ ${contents}
   <changelog>
     <release>
       <version>
-        <release>X.Y.Z</release>
-        <api>X.Y</api>
+        <release>0.13.0</release>
+        <api>0.13</api>
       </version>
       <stability>
         <release>stable</release>
         <api>stable</api>
       </stability>
-      <date>Your release date</date>
-      <license>All rights reserved</license>
+      <date>2011-08-19</date>
+      <license>New BSD license</license>
       <notes>
       </notes>
     </release>

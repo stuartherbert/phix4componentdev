@@ -96,6 +96,12 @@ ${contents}
         <min>1.0.0</min>
         <max>1.999.9999</max>
       </package>
+      <package>
+        <name>pirum</name>
+        <channel>pear.pirum-project.org</channel>
+        <min>1.0.2</min>
+        <max>1.999.9999</max>
+      </package>
     </required>
   </dependencies>
   <phprelease />

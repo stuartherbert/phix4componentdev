@@ -11,7 +11,7 @@ System-Wide Installation
 phix4componentdev should be installed using the [PEAR Installer](http://pear.php.net). This installer is the community's de-facto standard for distributing PHP components.
 
     sudo pear channel-discover pear.phix-project.org
-    sudo pear install --alldeps phix/phix4componentdev
+    sudo pear -D auto_discover=1 install -Ba phix/phix4componentdev
 
 After installation, you will find phix inside your local PEAR repository, which on Linux systems is normally /usr/share/php.
 

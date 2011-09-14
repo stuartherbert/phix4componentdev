@@ -102,6 +102,12 @@ ${contents}
         <min>1.0.2</min>
         <max>1.999.9999</max>
       </package>
+      <package>
+        <name>phix</name>
+        <channel>pear.phix-project.org</channel>
+        <min>${project.majorVersion}.${project.minorVersion}.${project.patchLevel}</min>
+        <max>${project.majorVersion}.${project.minorVersion}.${project.patchLevel}</max>
+      </package>
     </required>
   </dependencies>
   <phprelease />

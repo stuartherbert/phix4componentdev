@@ -97,7 +97,7 @@ ${contents}
         <max>1.999.9999</max>
       </package>
       <package>
-        <name>pirum</name>
+        <name>Pirum</name>
         <channel>pear.pirum-project.org</channel>
         <min>1.0.2</min>
         <max>1.999.9999</max>

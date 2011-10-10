@@ -37,7 +37,7 @@ ${contents}
         <min>5.3.0</min>
       </php>
       <pearinstaller>
-        <min>1.9.3</min>
+        <min>1.9.4</min>
       </pearinstaller>
       <package>
         <name>ComponentManager</name>
@@ -96,7 +96,7 @@ ${contents}
       <package>
         <name>Pirum</name>
         <channel>pear.pirum-project.org</channel>
-        <min>1.0.2</min>
+        <min>1.0.4</min>
         <max>1.999.9999</max>
       </package>
       <package>

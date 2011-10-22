@@ -3,9 +3,9 @@
 <project default="help" basedir=".">
   <!-- Human-readable info about our component -->
   <property file="build.properties" />
-  <php function="date" returnProperty="date.now">
-    <param value="YmdHi"/>
-  </php>
+  <taskdef name="now" classname="Phix_Project.ComponentManager.Phing.NowTask" />
+  <now name="date.now"/>
+  <echo message="Now is ${date.now}"/>
   <if>
     <and>
       <isset property="project.snapshot"/>
@@ -53,11 +53,23 @@
   <property name="project.vendor.wwwdir"   value="${project.vendordir}/www" override="true" />
 
   <property name="project.distdir"         value="${project.basedir}/dist" />
+  <property name="project.distdir.lastBuilt" value="${project.basedir}/dist/lastBuilt" />
   <property name="project.tarfilename"     value="${project.name}-${project.version}.tgz" />
   <property name="project.tarfile"         value="${project.distdir}/${project.tarfilename}" />
 
-  <!-- a user to use to publish on the pear server -->
-  <property name="remote.user" value="" override="true" />
+  <!-- what was the last PEAR package we created, if any? -->
+  <if>
+    <available file="${project.distdir.lastBuilt}"/>
+    <then>
+      <property file="${project.distdir.lastBuilt}"/>
+    </then>
+    <else>
+      <property name="project.lastBuiltTarfile" value="false"/>  
+    </else>
+  </if>
+
+  <taskdef name="phingcallifexists" classname="Phix_Project.ComponentManager.Phing.PhingCallIfExistsTask" />
+  <import file="build.local.xml"/>
 
   <!-- override this if you want to run additional PEAR commands -->
   <property name="pear.cmd" value="" override="true" />
@@ -197,7 +209,7 @@
     <mkdir dir="${project.review.logsdir}" />
     <exec command="phpunit --configuration=phpunit.xml ${project.src.testunitdir}" checkreturn="true" logoutput="true"/>
     <echo/>
-    <echo>The code coverage report is in ${project.review.codecoveragedir}</echo>
+    <echo>The code coverage report is in file://${project.review.codecoveragedir}</echo>
     <echo/>
   </target>
 
@@ -306,45 +318,53 @@
         <include name="**/**" />
       </fileset>
     </tar>
+
+    <!-- write a message to say which file we built last -->
+    <echo file="${project.distdir.lastBuilt}" append="false">project.lastBuiltTarfile=${project.tarfile}</echo>
     <echo>Your PEAR package is in ${project.tarfile}</echo>
   </target>
 
   <!-- Install the code -->
   <target name="install-vendor">
+    <echo>${project.lastBuiltTarfile}</echo>
     <if>
-      <available file="${project.tarfile}"/>
+      <not>
+        <contains string="${project.lastBuiltTarfile}" substring="${project.name}"/>
+      </not>
       <then>
-        <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps -f ${project.tarfile}" logoutput="true" checkreturn="true"/>
+        <echo>Please run 'phing pear-package' first, then try again.</echo>
       </then>
       <elseif>
-        <istrue value="${project.stability}"/>
+        <available file="${project.lastBuiltTarfile}"/>
         <then>
-          <echo>Cannot find PEAR package file ${project.tarfile}</echo>
-          <echo>If your snapshot is more than 1 minute old, that is the cause</echo>
-          <echo>of this error, sorry :(</echo>
+          <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps -f ${project.lastBuiltTarfile}" logoutput="true" checkreturn="true"/>
         </then>
       </elseif>
       <else>
-        <echo>Cannot find PEAR package file ${project.tarfile}</echo>
+        <echo>Cannot find PEAR package file ${project.lastBuiltTarfile}</echo>
+        <echo>Run 'phing pear-package' to create a new PEAR package, then try again</echo>
       </else>
     </if>
   </target>
+
+  <!-- install a package system-wide -->
   <target name="install-system">
     <if>
-      <available file="${project.tarfile}"/>
+      <not>
+        <contains string="${project.lastBuiltTarfile}" substring="${project.name}"/>
+      </not>
       <then>
-        <exec command="pear install -f -a ${project.tarfile}" checkreturn="true" logoutput="true" />
+        <echo>Please run 'phing pear-package' first, then try again.</echo>
       </then>
       <elseif>
-        <istrue value="${project.stability}"/>
+        <available file="${project.lastBuiltTarfile}"/>
         <then>
-          <echo>Cannot find PEAR package file ${project.tarfile}</echo>
-          <echo>If your snapshot is more than 1 minute old, that is the cause</echo>
-          <echo>of this error, sorry :(</echo>
+          <exec command="pear install -f -a ${project.lastBuiltTarfile}" checkreturn="true" logoutput="true" />
         </then>
       </elseif>
       <else>
-        <echo>Cannot find PEAR package file ${project.tarfile}</echo>
+        <echo>Cannot find PEAR package file ${project.lastBuiltTarfile}</echo>
+        <echo>Run 'phing pear-package' to create a new PEAR package, then try again</echo>
       </else>
     </if>
   </target>
@@ -352,28 +372,29 @@
   <!-- Publish to local copy of PEAR channel -->
   <target name="publish-local" depends="pear-package">
     <if>
-      <available file="${project.tarfile}"/>
+      <not>
+        <contains string="${project.lastBuiltTarfile}" substring="${project.name}"/>
+      </not>
       <then>
-        <!-- get rid of any existing snapshots we may have published -->
-        <foreach param="packagefile" absparam="abspackagefile" target="pirum-remove-package">
-          <fileset dir="${pear.local}/get">
-            <include name="${project.name}*snapshot*.tgz" />
-          </fileset>
-        </foreach>
-
-        <!-- publish the new PEAR package -->
-        <exec command="pirum add ${pear.local} ${project.tarfile}" checkreturn="true" logoutput="true" />
+        <echo>Please run 'phing pear-package' first, then try again.</echo>
       </then>
       <elseif>
-        <istrue value="${project.stability}"/>
+        <available file="${project.lastBuiltTarfile}"/>
         <then>
-          <echo>Cannot find PEAR package file ${project.tarfile}</echo>
-          <echo>If your snapshot is more than 1 minute old, that is the cause</echo>
-          <echo>of this error, sorry :(</echo>
+          <!-- get rid of any existing snapshots we may have published -->
+          <foreach param="packagefile" absparam="abspackagefile" target="pirum-remove-package">
+            <fileset dir="${pear.local}/get">
+              <include name="${project.name}*snapshot*.tgz" />
+            </fileset>
+          </foreach>
+
+          <!-- publish the new PEAR package -->
+          <exec command="pirum add ${pear.local} ${project.lastBuiltTarfile}" checkreturn="true" logoutput="true" />
         </then>
       </elseif>
       <else>
-        <echo>Cannot find PEAR package file ${project.tarfile}</echo>
+        <echo>Cannot find PEAR package file ${project.lastBuiltTarfile}</echo>
+        <echo>Run 'phing pear-package' to create a new PEAR package, then try again</echo>
       </else>
     </if>
   </target>

@@ -40,10 +40,16 @@ ${contents}
         <min>1.9.4</min>
       </pearinstaller>
       <package>
+        <name>ComponentManager</name>
+        <channel>pear.phix-project.org</channel>
+        <min>2.0.0</min>
+        <max>9999.9999.9999</max>
+      </package>
+      <package>
         <name>ComponentManagerPhpLibrary</name>
         <channel>pear.phix-project.org</channel>
         <min>10.0.0</min>
-	      <max>10.999.9999</max>
+        <max>10.999.9999</max>
       </package>
       <package>
         <name>PHPUnit</name>

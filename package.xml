@@ -48,8 +48,8 @@ ${contents}
       <package>
         <name>ComponentManagerPhpLibrary</name>
         <channel>pear.phix-project.org</channel>
-        <min>10.0.0</min>
-        <max>10.999.9999</max>
+        <min>11.0.0</min>
+        <max>11.999.9999</max>
       </package>
       <package>
         <name>PHPUnit</name>
@@ -98,6 +98,12 @@ ${contents}
         <channel>pear.phpunit.de</channel>
         <min>1.0.0</min>
         <max>1.999.9999</max>
+      </package>
+      <package>
+        <name>phploc</name>
+        <channel>pear.phpunit.de</channel>
+        <min>1.0.0</min>
+        <max>999.999.9999</max>
       </package>
       <package>
         <name>Pirum</name>

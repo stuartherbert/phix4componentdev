@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- build file for phing -->
 <project default="help" basedir=".">
+  <!-- custom tasks -->
+  <taskdef name="now" classname="Phix_Project.ComponentManager.Phing.NowTask" />
+  <taskdef name="dedupe" classname="Phix_Project.ComponentManager.Phing.DedupeTask" />
+
   <!-- Human-readable info about our component -->
   <property file="build.properties" />
-  <taskdef name="now" classname="Phix_Project.ComponentManager.Phing.NowTask" />
   <now name="date.now"/>
   <if>
     <and>
@@ -77,7 +80,7 @@
     <exclude name="**/.empty"/>
     <exclude name="**/.svn"/>
   </fileset>
-  <fileset dir="${project.src.datadir}" id="datafiles">
+  <fileset dir="${project.src.datadir}" id="datafiles" defaultexcludes="false">
     <include name="**/**"/>
     <exclude name="**/.DS_Store"/>
     <exclude name="**/.empty"/>
@@ -277,6 +280,25 @@
     <exec command="phix pear:register-channels" checkreturn="true" logoutput="true" />
     <exec command="pear -c ${project.tmpdir}/pear-config install --alldeps ${project.tarfile}" logoutput="true" checkreturn="true"/>
     <echo/>
+    <echo>Making sure vendor/ does not contain ${project.name}</echo>
+    <echo>Removing ${project.name}'s code from vendor/</echo>
+    <dedupe src="${project.srcdir}" from="${project.vendordir}"/>
+    <if>
+      <available file="${project.vendordir}/docs/${project.name}" type="dir"/>
+      <then>
+        <echo>Removing ${project.name}'s docs from vendor/</echo>
+        <delete dir="${project.vendordir}/docs/${project.name}"/>
+      </then>
+    </if>
+    <if>
+      <available file="${project.vendordir}/tests/${project.name}" type="dir"/>
+      <then>
+        <echo>Removing ${project.name}'s unit tests from vendor/</echo>
+        <dedupe src="${project.src.testunitdir}/php" from="${project.vendordir}/tests/${project.name}" />
+        <delete dir="${project.vendordir}/tests/${project.name}"/>
+      </then>
+    </if>
+    <echo/>
     <echo>Your vendor/ folder has been built.</echo>
     <echo>You only need to run 'phing build-vendor' again if you change the</echo>
     <echo>dependencies listed in your package.xml file.</echo>
@@ -370,7 +392,7 @@
     <mkdir dir="${project.distdir}" />
     <delete file="${project.tarfile}" />
     <tar destfile="${project.tarfile}" compression="gzip">
-      <fileset dir="${project.builddir}">
+      <fileset dir="${project.builddir}" defaultexcludes="false">
         <include name="**/**" />
       </fileset>
     </tar>
